@@ -92,10 +92,10 @@ PY
 docker run --rm \
     --user "$(id -u):$(id -g)" \
     -e GOCACHE=/tmp/go-build \
+    -e GOMODCACHE=/tmp/go-mod \
     -v "$repo:/src:ro" \
     -v "$response:/session.json:ro" \
     -v "$key:/ear-key.json:ro" \
-    -v veraison-go-cache:/go/pkg/mod \
     -w /src \
     golang:1.26 \
     go run -buildvcs=false ./scheme/ocp-composite-eat/cmd/verify-ear \

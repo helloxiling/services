@@ -20,8 +20,8 @@ nonce=$(tr -d '\n' < "$repo/$artifact_dir/nonce.hex")
 docker run --rm \
     --user "$(id -u):$(id -g)" \
     -e GOCACHE=/tmp/go-build \
+    -e GOMODCACHE=/tmp/go-mod \
     -v "$repo:/src:ro" \
-    -v veraison-go-cache:/go/pkg/mod \
     -w /src \
     golang:1.26 \
     sh -c 'go build -buildvcs=false -o /tmp/composite-verify ./scheme/ocp-composite-eat/cmd/composite-verify && exec /tmp/composite-verify "$@"' -- \

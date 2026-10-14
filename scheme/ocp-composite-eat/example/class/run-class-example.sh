@@ -25,7 +25,6 @@ docker run --rm --entrypoint /usr/local/go/bin/go \
     -e GOCACHE=/tmp/go-build \
     -v "$repo:/src:ro" \
     -v "$output:/out" \
-    -v veraison-go-cache:/go/pkg/mod \
     -w /src veraison/builder \
     run -buildvcs=false ./scheme/ocp-composite-eat/example/class/generator/cmd/generate-demo \
     --class --cocli /home/builder/go/bin/cocli --output /out

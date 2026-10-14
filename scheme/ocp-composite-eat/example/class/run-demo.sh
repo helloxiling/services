@@ -63,10 +63,10 @@ repo=$(realpath "$this_dir/../../../..")
 docker run --rm \
     --user "$(id -u):$(id -g)" \
     -e GOCACHE=/tmp/go-build \
-    -v "$repo:/src" \
+    -e GOMODCACHE=/tmp/go-mod \
+    -v "$repo:/src:ro" \
     -v "$response:/session.json:ro" \
     -v "$key:/ear-key.json:ro" \
-    -v veraison-go-cache:/go/pkg/mod \
     -w /src \
     golang:1.26 \
     go run ./scheme/ocp-composite-eat/cmd/verify-ear \
