@@ -11,6 +11,16 @@ DEBUG_HOST ?= builder
 # Additional flags passed to Docker when building various images. E.g. you can
 # bypass local layer cache by specifying DOCKER_BUILD_FLAGS=--no-cache
 DOCKER_BUILD_FLAGS ?=
+OCP_COMPOSITE_EAT_ENABLED ?= 0
+OCP_COMPOSITE_EAT_DEMO_MODE ?= class
+OCP_COMPOSITE_EAT_PACKAGE_DIR ?=
+OCP_COMPOSITE_EAT_PROFILE ?=
+
+ifneq ($(strip $(OCP_COMPOSITE_EAT_PACKAGE_DIR)),)
+OCP_COMPOSITE_EAT_PACKAGE_FLAGS := \
+	--mount "type=bind,src=$(abspath $(OCP_COMPOSITE_EAT_PACKAGE_DIR)),dst=/veraison/composite-eat-package,readonly" \
+	-e OCP_COMPOSITE_EAT_PACKAGE_DIR=/veraison/composite-eat-package
+endif
 ##############################################################################
 
 .DEFAULT_TARGET: all
@@ -57,7 +67,7 @@ builder: .built/builder
 .PHONY: build
 build: .built/build
 
-.built/build: .built/builder
+.built/build: .built/builder force-deploy-config
 	docker container run --rm \
 		-v $(THIS_DIR)../..:/veraison/build veraison/builder build
 	@mkdir -p .built && touch .built/build
@@ -65,12 +75,19 @@ build: .built/build
 .PHONY: deploy
 deploy: .built/deploy
 
-.built/deploy: .built/build
+.PHONY: force-deploy-config
+force-deploy-config:
+
+.built/deploy: .built/build force-deploy-config
 	@# If DEPLOY_DEST contains /, assume a directory and make sure it exists.
 	@if [[ "$(shell echo "$(DEPLOY_DEST)" | sed 's/[^\/]//g')" ]]; then \
 		mkdir -p $(DEPLOY_DEST); \
 	fi
 	docker container run --rm \
+		-e OCP_COMPOSITE_EAT_ENABLED=$(OCP_COMPOSITE_EAT_ENABLED) \
+		-e OCP_COMPOSITE_EAT_DEMO_MODE=$(OCP_COMPOSITE_EAT_DEMO_MODE) \
+		-e OCP_COMPOSITE_EAT_PROFILE="$(OCP_COMPOSITE_EAT_PROFILE)" \
+		$(OCP_COMPOSITE_EAT_PACKAGE_FLAGS) \
 		-v $(THIS_DIR)../..:/veraison/build -v $(DEPLOY_DEST):/veraison/deploy \
 		veraison/builder deploy
 	@mkdir -p .built && touch .built/deploy
@@ -152,7 +169,8 @@ network: .built/network
 	@mkdir -p .built && touch .built/$*-container
 
 .built/network:
-	docker network create --driver bridge $(VERAISON_NETWORK)
+	docker network inspect $(VERAISON_NETWORK) >/dev/null 2>&1 || \
+		docker network create --driver bridge $(VERAISON_NETWORK)
 	@mkdir -p .built && touch .built/network
 
 .PHONY: manager

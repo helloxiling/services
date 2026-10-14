@@ -8,6 +8,7 @@ import (
 
 	scheme3 "github.com/veraison/services/scheme/arm-cca"
 	scheme10 "github.com/veraison/services/scheme/da-spdm"
+	scheme11 "github.com/veraison/services/scheme/ocp-composite-eat"
 	scheme1 "github.com/veraison/services/scheme/parsec-cca"
 	scheme5 "github.com/veraison/services/scheme/parsec-tpm"
 	scheme6 "github.com/veraison/services/scheme/psa-iot"
@@ -38,6 +39,7 @@ var schemePlugins = []plugin.IPluggable{
 	handler.MustNewSchemeImplementationWrapper(scheme6.Descriptor, scheme6.NewImplementation()),
 	handler.MustNewSchemeImplementationWrapper(scheme7.Descriptor, scheme7.NewImplementation()),
 	handler.MustNewSchemeImplementationWrapper(scheme10.Descriptor, scheme10.NewImplementation()),
+	scheme11.NewHandler(),
 }
 
 var storePlugins = []plugin.IPluggable{

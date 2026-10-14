@@ -1,0 +1,7 @@
+{
+  "signer": {"name": "Reference Component Endorser"},
+  "validity": {
+    "not-before": "2026-01-01T00:00:00Z",
+    "not-after": "2030-01-01T00:00:00Z"
+  }
+}

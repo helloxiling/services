@@ -1,0 +1,22 @@
+{
+  "apiVersion": "composite-eat.ocp.org/v1alpha1",
+  "kind": "DeviceReferenceValues",
+  "id": "tag:example.com,2026:device:tpm-model-x",
+  "validity": {
+    "notBefore": "2026-09-01T00:00:00Z",
+    "notAfter": "2027-09-01T00:00:00Z"
+  },
+  "model": "tpm",
+  "evidenceMediaType": "application/spdm-evidence+cbor",
+  "identityPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEk0kOBbs8DvMivcNsNnUvxwSQIMnNfpjk\ncNchpbQQHAlxkaxxyP1avOXTD3Wlv0yzL2sFSOso4CwkKUbPx7UhMWZOhf1YIE6/\nSfesMy5QVXr/kol34ra9MeG7FHRXHgHB\n-----END PUBLIC KEY-----\n",
+  "referenceSetId": "fw-4.2-production",
+  "references": [
+    {
+      "keyType": "uint",
+      "key": "1",
+      "representation": "digest",
+      "algorithm": "sha-384",
+      "value": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
+    }
+  ]
+}

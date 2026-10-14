@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # shellcheck disable=SC2155,SC2086
 # This script is the entry point for the builder docker container.
+set -euo pipefail
 
 _ERROR='\e[0;31mERROR\e[0m'
 
@@ -31,6 +32,8 @@ function deploy() {
     mkdir -p $DEPLOY_DIR/utils
     mkdir -p $DEPLOY_DIR/certs
     mkdir -p $DEPLOY_DIR/plugins/stores
+    mkdir -p $DEPLOY_DIR/demo
+    find "$DEPLOY_DIR/demo" -mindepth 1 -delete
 
     echo "deploying services"
     cp $BUILD_DIR/provisioning/cmd/provisioning-service/provisioning-service $DEPLOY_DIR/
@@ -56,6 +59,55 @@ function deploy() {
     set -a
     source $BUILD_DIR/deployments/docker/deployment.cfg
     set +a
+    case ${OCP_COMPOSITE_EAT_ENABLED:-0} in
+        0)
+            OCP_COMPOSITE_EAT_SCHEME_CONFIG=
+            ;;
+        1)
+            case ${OCP_COMPOSITE_EAT_DEMO_MODE:-class} in
+                class)
+                    if [[ -n ${OCP_COMPOSITE_EAT_PACKAGE_DIR:-} ]]; then
+                        _check_is_mount_point "$OCP_COMPOSITE_EAT_PACKAGE_DIR"
+                        for required in class-package.json source-roots.pem evidence-roots.pem; do
+                            [[ -f "$OCP_COMPOSITE_EAT_PACKAGE_DIR/$required" ]] || {
+                                echo -e "$_ERROR: custom Composite EAT package has no $required" >&2
+                                exit 1
+                            }
+                        done
+                        cp -R -- "$OCP_COMPOSITE_EAT_PACKAGE_DIR"/. "$DEPLOY_DIR/demo/"
+                    else
+                        cp -R $BUILD_DIR/scheme/ocp-composite-eat/example/class/.example-output/class/. $DEPLOY_DIR/demo/
+                    fi
+                    composite_eat_config=(
+                        'scheme:' \
+                        '  OCP_COMPOSITE_EAT:' \
+                        '    class-package: /opt/veraison/demo/class-package.json' \
+                        '    endorsement-roots: /opt/veraison/demo/source-roots.pem' \
+                        '    evidence-roots: /opt/veraison/demo/evidence-roots.pem' \
+                        '    native-spdm: true' \
+                        '    caliptra-compatibility: false'
+                    )
+                    if [[ -n ${OCP_COMPOSITE_EAT_PROFILE:-} ]]; then
+                        [[ "$OCP_COMPOSITE_EAT_PROFILE" != *[[:space:]]* ]] || {
+                            echo -e "$_ERROR: OCP_COMPOSITE_EAT_PROFILE must not contain whitespace" >&2
+                            exit 1
+                        }
+                        composite_eat_config+=("    composite-eat-profile: '$OCP_COMPOSITE_EAT_PROFILE'")
+                    fi
+                    printf -v OCP_COMPOSITE_EAT_SCHEME_CONFIG '%s\n' "${composite_eat_config[@]}"
+                    ;;
+                *)
+                    echo -e "$_ERROR: OCP_COMPOSITE_EAT_DEMO_MODE must be class" >&2
+                    exit 1
+                    ;;
+            esac
+            ;;
+        *)
+            echo -e "$_ERROR: OCP_COMPOSITE_EAT_ENABLED must be 0 or 1" >&2
+            exit 1
+            ;;
+    esac
+    export OCP_COMPOSITE_EAT_SCHEME_CONFIG
     cat $BUILD_DIR/deployments/docker/src/config.yaml.template | envsubst > $DEPLOY_DIR/config.yaml
     cat $BUILD_DIR/deployments/docker/src/keycloak.conf.template | envsubst > $DEPLOY_DIR/keycloak.conf
     cat $BUILD_DIR/deployments/docker/src/cocli-config.yaml.template | envsubst > $DEPLOY_DIR/utils/cocli-config.yaml

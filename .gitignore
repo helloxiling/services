@@ -54,3 +54,6 @@ perf/reports/2025-02/images/weights
 # tools-bin directory is created automatically when running make. It contains
 # pre-built tools needs for the make process (such as golanci-lint)
 tools-bin/*
+
+# Generated Composite EAT example artifacts. Source templates remain tracked.
+scheme/ocp-composite-eat/example/class/.example-output/

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "reference-server-0",
+    "revision": "enrollment-1",
+    "validity": {
+      "notBefore": "2026-01-01T00:00:00Z",
+      "notAfter": "2030-01-01T00:00:00Z"
+    },
+    "platformId": "tag:example.com,2026:reference-platform-family",
+    "platformRevision": "reference-1",
+    "variant": "single-controller",
+    "sku": "reference-a",
+    "hardwareRevision": "rev1",
+    "lead": {
+      "class": "reference-platform-root",
+      "ueid": "011112131415161718191a1b1c1d1e1f20",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEIqSqToWfGYFQd2Oh3v2Ic2uUuW9zrYkG\nwd5ILgY4itU6qx0bBLZzBed3IfAJ4G18nj8HozRWuqIT5IpXHY4accux0eBc1U/D\nq7ylPFMC1WHTfNf3uNTLNgHO1MoMsgTj\n-----END PUBLIC KEY-----\n"
+    },
+    "members": {
+      "env.controller.0": {
+        "class": "reference-controller",
+        "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEk0kOBbs8DvMivcNsNnUvxwSQIMnNfpjk\ncNchpbQQHAlxkaxxyP1avOXTD3Wlv0yzL2sFSOso4CwkKUbPx7UhMWZOhf1YIE6/\nSfesMy5QVXr/kol34ra9MeG7FHRXHgHB\n-----END PUBLIC KEY-----\n"
+      }
+    }
+  }
+]

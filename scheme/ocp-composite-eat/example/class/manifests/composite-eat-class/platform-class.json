@@ -1,0 +1,71 @@
+{
+  "apiVersion": "composite-eat.ocp.org/v1alpha1",
+  "kind": "PlatformClassManifest",
+  "id": "tag:example.com,2026:reference-platform-family",
+  "revision": "reference-1",
+  "compositeEatProfile": "tag:example.com,2026:composite-eat-reference#1.0.0",
+  "validity": {
+    "notBefore": "2026-01-01T00:00:00Z",
+    "notAfter": "2030-01-01T00:00:00Z"
+  },
+  "environment": {
+    "class": {
+      "id": {"type": "bytes", "value": "cmVmZXJlbmNlLXBsYXRmb3JtLWZhbWlseQ=="},
+      "model": "platform"
+    }
+  },
+  "leadClass": "reference-platform-root",
+  "leadMeasurements": [
+    {
+      "environment": {
+        "class": {
+          "id": {"type": "bytes", "value": "cmVmZXJlbmNlLXBsYXRmb3JtLWJvb3Q="},
+          "model": "boot"
+        }
+      },
+      "references": [
+        {
+          "keyType": "string",
+          "key": "lead.firmware",
+          "representation": "raw",
+          "value": "7265666572656e63652d706c6174666f726d2d72656c656173652d31"
+        }
+      ]
+    }
+  ],
+  "variants": {
+    "single-controller": {
+      "skus": ["reference-a"],
+      "hardwareRevisions": ["rev1"],
+      "members": [
+        {
+          "label": "env.controller.0",
+          "required": true,
+          "componentId": "tag:example.com,2026:reference-controller-release",
+          "componentClass": "reference-controller",
+          "referenceSetId": "controller-release-1"
+        }
+      ]
+    },
+    "dual-controller": {
+      "skus": ["reference-b"],
+      "hardwareRevisions": ["rev1", "rev2"],
+      "members": [
+        {
+          "label": "env.controller.0",
+          "required": true,
+          "componentId": "tag:example.com,2026:reference-controller-release",
+          "componentClass": "reference-controller",
+          "referenceSetId": "controller-release-1"
+        },
+        {
+          "label": "env.controller.1",
+          "required": true,
+          "componentId": "tag:example.com,2026:reference-controller-release",
+          "componentClass": "reference-controller",
+          "referenceSetId": "controller-release-1"
+        }
+      ]
+    }
+  }
+}

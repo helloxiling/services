@@ -11,6 +11,7 @@ Currently the following schemes are implemented:
 
 - `arm-cca` Arm Confidential Compute Architecture attestation.
 - `nvidia` : NVIDIA Remote Attestation
+- `ocp-composite-eat`: experimental Platform Composite EAT attestation.
 - `psa-iot`: Arm Platform Security Architecture attestation.
 - `riot`: [RIoT based DICE](https://trustedcomputinggroup.org/work-groups/dice-architectures/)-compatible
   attestation (note: this does not implement any specific DICE architecture).
@@ -171,11 +172,11 @@ results in a simpler, more declarative scheme definition.
 
 In general, it is recommended that new schemes are defined using
 `SchemeDescriptor` and `ISchemeImplementation` plus any additional methods from
-`ISchemeHandler` that may be needed (such as `GetReferenceValueIDs`). 
+`ISchemeHandler` that may be needed (such as `GetReferenceValueIDs`).
 
 It is typically not necessary to fully implement `ISchemeHandler` -- any of its
 methods that are not needed for a particular implementation, and that are not
-part of `ISchemeImplementation`, may be omitted. 
+part of `ISchemeImplementation`, may be omitted.
 
 If, for whatever reason, this is not sufficient, it is possible to implement
 `ISchemeHandler` directly:

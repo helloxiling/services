@@ -1,0 +1,32 @@
+{
+  "apiVersion": "composite-eat.ocp.org/v1alpha1",
+  "kind": "ComponentReferenceManifest",
+  "id": "tag:example.com,2026:reference-controller-release",
+  "componentClass": "reference-controller",
+  "validity": {
+    "notBefore": "2026-01-01T00:00:00Z",
+    "notAfter": "2030-01-01T00:00:00Z"
+  },
+  "referenceSetId": "controller-release-1",
+  "environment": {
+    "class": {
+      "id": {"type": "bytes", "value": "cmVmZXJlbmNlLWNvbnRyb2xsZXI="},
+      "vendor": "Example",
+      "model": "controller"
+    }
+  },
+  "evidence": {
+    "mediaType": "application/spdm-evidence+cbor",
+    "spdmVersions": [18],
+    "baseHashes": ["sha-384"],
+    "baseAsym": ["ecdsa-p384"]
+  },
+  "references": [
+    {
+      "keyType": "uint",
+      "key": "1",
+      "representation": "raw",
+      "value": "7265666572656e63652d636f6e74726f6c6c65722d72656c656173652d31"
+    }
+  ]
+}

@@ -22,6 +22,8 @@ SUBDIR += vts
 SUBDIR += vtsclient
 
 COVERAGE_THRESHOLD ?= 60.0
+OCP_COMPOSITE_EAT_ENABLED ?= 0
+OCP_COMPOSITE_EAT_DEMO_MODE ?= class
 # plugin coverage is low because it is mostly tested via plugin/test, a
 # separate package (this is necessary due to to the nature of the code being
 # tested. plugin/test coverage is low because it's purely test code).
@@ -71,6 +73,10 @@ Available targets:
 	               above a pre-determined threshold ($(COVERAGE_THRESHOLD)%)
 	clean:         clean up build artefacts
 	really-clean:  clean up deployment and integration-test related artefacts
+	composite-eat-check: run focused Platform Composite EAT tests
+	composite-eat-replay: appraise recorded Evidence (PACKAGE, BUNDLE, NONCE)
+	composite-eat-package-check: prepare and verify a custom package deployment
+	composite-eat-example: generate and run the Platform Composite EAT class example
 	docker-deploy: create and start the docker deployment (docker must be
 	               installed, and the user must be in the docker group)
 	bootstrap:     install required dependencies (only works on Arch, Ubuntu,
@@ -110,9 +116,44 @@ export __DOCKER_DEPLOY_MESSAGE
 
 .PHONY: docker-deploy
 docker-deploy:
-	make -C deployments/docker all
+	make -C deployments/docker OCP_COMPOSITE_EAT_ENABLED=$(OCP_COMPOSITE_EAT_ENABLED) OCP_COMPOSITE_EAT_DEMO_MODE=$(OCP_COMPOSITE_EAT_DEMO_MODE) OCP_COMPOSITE_EAT_PACKAGE_DIR="$(OCP_COMPOSITE_EAT_PACKAGE_DIR)" OCP_COMPOSITE_EAT_PROFILE="$(OCP_COMPOSITE_EAT_PROFILE)" all
 	deployments/docker/veraison start
 	@echo "$$__DOCKER_DEPLOY_MESSAGE"
+
+.PHONY: composite-eat-example
+composite-eat-example:
+	scheme/ocp-composite-eat/example/class/run-class-example.sh
+
+.PHONY: composite-eat-check
+composite-eat-check:
+	$(MAKE) -C deployments/docker builder
+	docker run --rm --entrypoint go \
+		-v "$(CURDIR):/src" -v /etc/machine-id:/etc/machine-id:ro \
+		-w /src -e GOFLAGS=-buildvcs=false veraison/builder:latest \
+		test ./scheme/ocp-composite-eat/internal/spdm \
+		./scheme/ocp-composite-eat/platformcorim/manifest \
+		./scheme/ocp-composite-eat ./verification/... -count=1
+	scheme/ocp-composite-eat/scripts/test-check-package-deployment.sh
+
+.PHONY: composite-eat-replay
+composite-eat-replay:
+	$(MAKE) -C deployments/docker builder
+	scheme/ocp-composite-eat/scripts/replay-evidence.sh \
+		--package "$(PACKAGE)" --bundle "$(BUNDLE)" --nonce "$(NONCE)" $(if $(PROFILE),--profile "$(PROFILE)")
+
+.PHONY: composite-eat-package-check
+composite-eat-package-check:
+	$(MAKE) -C deployments/docker builder
+	scheme/ocp-composite-eat/scripts/check-package-deployment.sh \
+		--package "$(PACKAGE)" $(if $(PROFILE),--profile "$(PROFILE)")
+
+ifeq ($(filter composite-eat-example,$(MAKECMDGOALS)),composite-eat-example)
+__NO_RECURSE = true
+endif
+
+ifneq ($(filter composite-eat-check composite-eat-replay composite-eat-package-check,$(MAKECMDGOALS)),)
+__NO_RECURSE = true
+endif
 
 ifeq ($(filter docker-deploy,$(MAKECMDGOALS)),docker-deploy)
 __NO_RECURSE = true

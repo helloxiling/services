@@ -6,6 +6,7 @@ SUBDIR += common
 SUBDIR += arm-cca
 SUBDIR += da-spdm
 SUBDIR += nvidia
+SUBDIR += ocp-composite-eat
 SUBDIR += parsec-cca
 SUBDIR += parsec-tpm
 SUBDIR += psa-iot

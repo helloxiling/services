@@ -1,0 +1,48 @@
+{
+  "apiVersion": "composite-eat.ocp.org/v1alpha1",
+  "kind": "PlatformInventory",
+  "id": "tag:example.com,2026:platform-a",
+  "compositeEatProfile": "tag:example.com,2026:composite-eat-reference#1.0.0",
+  "platformCorimProfile": "tag:example.com,2026:platform-composite-eat-model-index#0.5.0",
+  "validity": {
+    "notBefore": "2026-09-01T00:00:00Z",
+    "notAfter": "2027-09-01T00:00:00Z"
+  },
+  "platform": {
+    "environment": {
+      "classId": "platform-a",
+      "vendor": "Example",
+      "model": "platform",
+      "index": 0,
+      "ueid": "010102030405060708090a0b0c0d0e0f10"
+    },
+    "leadPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEIqSqToWfGYFQd2Oh3v2Ic2uUuW9zrYkG\nwd5ILgY4itU6qx0bBLZzBed3IfAJ4G18nj8HozRWuqIT5IpXHY4accux0eBc1U/D\nq7ylPFMC1WHTfNf3uNTLNgHO1MoMsgTj\n-----END PUBLIC KEY-----\n",
+    "references": [
+      {
+        "keyType": "string",
+        "key": "lead.firmware",
+        "representation": "digest",
+        "algorithm": "sha-384",
+        "value": "222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222"
+      }
+    ]
+  },
+  "members": [
+    {
+      "label": "env.tpm.0",
+      "required": true,
+      "environment": {
+        "classId": "example-tpm",
+        "vendor": "Example",
+        "model": "tpm",
+        "index": 0,
+        "ueid": "012122232425262728292a2b2c2d2e2f30"
+      },
+      "vendorManifest": "../shared/example-tpm.json",
+      "collection": {
+        "mctpEid": 9,
+        "redfishUri": "/redfish/v1/ComponentIntegrity/9"
+      }
+    }
+  ]
+}

@@ -42,6 +42,7 @@ plugin:
     dir: ./plugins/schemes/
   go-plugin-stores:
     dir: ./plugins/stores/
+${OCP_COMPOSITE_EAT_SCHEME_CONFIG}
 po-store:
   backend: sql
   sql:

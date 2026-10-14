@@ -164,6 +164,27 @@ This should output the [EAR](https://github.com/thomas-fossati/draft-ear)
 attestation result. The "rp" means you're verifying as the Relying Party; you
 can also specify "attest" to verify as an attester.
 
+### Platform Composite EAT reference integration
+
+The experimental Platform Composite EAT scheme includes a self-contained, synthetic
+class example. On Linux with GNU Make, Docker with Buildx, `curl`, `jq`, Python
+3, OpenSSL, and `xxd`, run:
+
+```bash
+make composite-eat-example
+```
+
+The command creates disposable signing authorities and evidence, runs positive
+and negative offline appraisal cases, deploys the scheme, verifies the same
+cases through the challenge-response API, and stops the services on exit. See
+the [example documentation](scheme/ocp-composite-eat/example/class/README.md)
+for expected results and the
+[adopter runbook](scheme/ocp-composite-eat/docs/adopter-runbook.md) for the
+reviewed CoRIM creation, package, signing, enrollment, deployment, and
+live-collection flow. The runbook also identifies which CoRIM operations use
+upstream tooling, which class-policy pieces are experimental, and the provenance
+of the Veraison session mechanism used for fresh hardware collection.
+
 ## Provisioning
 
 Provisioning service provides a REST-based API for external trusted supply
@@ -228,4 +249,3 @@ Endorsements and Trust Anchors.
 
 KV Store details can be found under
 [kvstore](https://github.com/veraison/services/tree/main/kvstore/README.md#kv-store)
-
