@@ -1,0 +1,12 @@
+{
+  "apiVersion": "composite-eat.ocp.org/v1alpha1",
+  "kind": "DeviceReferenceValues",
+  "id": "tag:example.com,2026:test-component-b",
+  "validity": {"notBefore": "2026-01-01T00:00:00Z", "notAfter": "2030-01-01T00:00:00Z"},
+  "model": "controller",
+  "evidenceMediaType": "application/spdm-evidence+cbor",
+  "identityPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEytWxmym4nwhx9xfukMoE1EItYFuyADKi\nFcXdxI/y8+9Nj9INkAwvRXmMA4Nu+4OuEV5gIGLaYEs0eY34XfL5G+p63iNHPH6L\nPYV4gg6vi8VgQAtV2d6VWthgQ1W9xzaI\n-----END PUBLIC KEY-----\n",
+  "referenceSetId": "test-controller-release-1",
+  "references": [{"keyType": "uint", "key": "1", "representation": "digest", "algorithm": "sha-384", "value": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"}],
+  "evidencePolicy": {"mediaType": "application/spdm-evidence+cbor", "spdmVersions": [18], "baseHashes": ["sha-384"], "baseAsym": ["ecdsa-p384"]}
+}

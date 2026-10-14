@@ -1,0 +1,29 @@
+{
+  "apiVersion": "composite-eat.ocp.org/v1alpha1",
+  "kind": "PlatformInventory",
+  "id": "tag:example.com,2026:test-dual-component-platform",
+  "compositeEatProfile": "tag:example.com,2026:composite-eat-reference#1.0.0",
+  "platformCorimProfile": "tag:example.com,2026:platform-composite-eat-model-index#0.5.0",
+  "validity": {"notBefore": "2026-01-01T00:00:00Z", "notAfter": "2030-01-01T00:00:00Z"},
+  "platform": {
+    "environment": {"classId": "test-dual-component-platform", "vendor": "Example", "model": "platform", "index": 0, "ueid": "010102030405060708090a0b0c0d0e0f10"},
+    "leadPublicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEIqSqToWfGYFQd2Oh3v2Ic2uUuW9zrYkG\nwd5ILgY4itU6qx0bBLZzBed3IfAJ4G18nj8HozRWuqIT5IpXHY4accux0eBc1U/D\nq7ylPFMC1WHTfNf3uNTLNgHO1MoMsgTj\n-----END PUBLIC KEY-----\n",
+    "references": [{"keyType": "string", "key": "lead.firmware", "representation": "digest", "algorithm": "sha-384", "value": "222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222"}]
+  },
+  "members": [
+    {
+      "label": "env.controller.0",
+      "required": true,
+      "environment": {"classId": "test-controller", "vendor": "Example", "model": "controller", "index": 0, "ueid": "012122232425262728292a2b2c2d2e2f30"},
+      "vendorManifest": "component-0.json",
+      "collection": {"mctpEid": 12}
+    },
+    {
+      "label": "env.controller.1",
+      "required": true,
+      "environment": {"classId": "test-controller", "vendor": "Example", "model": "controller", "index": 1, "ueid": "013132333435363738393a3b3c3d3e3f40"},
+      "vendorManifest": "component-1.json",
+      "collection": {"mctpEid": 13}
+    }
+  ]
+}

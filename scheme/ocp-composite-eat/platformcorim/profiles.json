@@ -1,0 +1,27 @@
+{
+  "compositeEat": {
+    "id": "tag:example.com,2026:composite-eat-reference#1.0.0",
+    "status": "experimental",
+    "version": "1.0.0"
+  },
+  "platformCorim": {
+    "id": "tag:example.com,2026:platform-composite-eat-model-index#0.5.0",
+    "status": "experimental",
+    "version": "0.5.0"
+  },
+  "platformCorimExplicit": {
+    "id": "tag:example.com,2026:platform-composite-eat-explicit#0.5.0",
+    "status": "experimental",
+    "version": "0.5.0"
+  },
+  "platformClass": {
+    "id": "tag:example.com,2026:platform-composite-eat-class#0.5.0",
+    "status": "experimental",
+    "version": "0.5.0"
+  },
+  "componentClass": {
+    "id": "tag:example.com,2026:component-reference-class#0.5.0",
+    "status": "experimental",
+    "version": "0.5.0"
+  }
+}
