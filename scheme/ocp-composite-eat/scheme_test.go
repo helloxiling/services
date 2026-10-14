@@ -28,6 +28,10 @@ import (
 	"github.com/veraison/services/vts/appraisal"
 )
 
+func TestHandlerUsesInternalEndorsements(t *testing.T) {
+	require.False(t, NewHandler().UsesExternalEndorsements())
+}
+
 func TestUpstreamCocliClassWorkflow(t *testing.T) {
 	cocli := os.Getenv("COCLI")
 	if cocli == "" {

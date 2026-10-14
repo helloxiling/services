@@ -99,6 +99,13 @@ func (o *SchemeImplementationWrapper) GetSupportedVerificationMediaTypes() []str
 	return o.Desc.EvidenceMediaTypes
 }
 
+func (o *SchemeImplementationWrapper) UsesExternalEndorsements() bool {
+	if impl, ok := o.Impl.(interface{ UsesExternalEndorsements() bool }); ok {
+		return impl.UsesExternalEndorsements()
+	}
+	return true
+}
+
 func (o *SchemeImplementationWrapper) ValidateCorim(uc *corim.UnsignedCorim) (*ValidateCorimResponse, error) {
 	corimImpl, ok := o.Impl.(interface {
 		ValidateCorim(*corim.UnsignedCorim) (*ValidateCorimResponse, error)

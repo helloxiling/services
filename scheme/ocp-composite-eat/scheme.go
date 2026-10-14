@@ -125,6 +125,10 @@ func (h *Handler) GetSupportedVerificationMediaTypes() []string {
 	return []string{EvidenceMediaType}
 }
 
+func (h *Handler) UsesExternalEndorsements() bool {
+	return false
+}
+
 func (h *Handler) ValidateCorim(*corim.UnsignedCorim) (*handler.ValidateCorimResponse, error) {
 	return &handler.ValidateCorimResponse{IsValid: false, Message: "configured endorsement providers do not accept provisioning updates"}, nil
 }

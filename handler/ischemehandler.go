@@ -26,6 +26,10 @@ type ISchemeHandler interface {
 	// evidence formats.
 	GetSupportedVerificationMediaTypes() []string
 
+	// UsesExternalEndorsements reports whether VTS must retrieve trust anchors
+	// and reference values from the configured endorsement store.
+	UsesExternalEndorsements() bool
+
 	// ValidateCorim validates the contents of the provided CoRIM with respect
 	// to the specified profile.
 	ValidateCorim(uc *corim.UnsignedCorim) (*ValidateCorimResponse, error)

@@ -128,6 +128,19 @@ func (o *SchemeRPCClient) GetSupportedVerificationMediaTypes() []string {
 	return resp
 }
 
+func (o *SchemeRPCClient) UsesExternalEndorsements() bool {
+	var (
+		unused any
+		resp   bool
+	)
+
+	if err := o.client.Call("Plugin.UsesExternalEndorsements", &unused, &resp); err != nil {
+		return true
+	}
+
+	return resp
+}
+
 func (o *SchemeRPCClient) ValidateCorim(uc *corim.UnsignedCorim) (*ValidateCorimResponse, error) {
 	toValidate, err := uc.ToCBOR()
 	if err != nil {
@@ -330,6 +343,11 @@ func (o *SchemeRPCServer) GetSupportedProvisioningMediaTypes(unused any, resp *[
 
 func (o *SchemeRPCServer) GetSupportedVerificationMediaTypes(unused any, resp *[]string) error {
 	*resp = o.Impl.GetSupportedVerificationMediaTypes()
+	return nil
+}
+
+func (o *SchemeRPCServer) UsesExternalEndorsements(unused any, resp *bool) error {
+	*resp = o.Impl.UsesExternalEndorsements()
 	return nil
 }
 

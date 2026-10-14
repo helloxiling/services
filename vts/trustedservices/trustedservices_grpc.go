@@ -385,54 +385,57 @@ func (o *GRPC) GetAttestation(
 		return o.finalize(appraisal, err)
 	}
 
-	appraisal.TrustAnchorIDs, err = handler.GetTrustAnchorIDs(evidence)
-	if err != nil {
-		if errors.Is(err, handlermod.BadEvidenceError{}) {
-			appraisal.SetAllClaims(ear.CryptoValidationFailedClaim)
-			appraisal.AddPolicyClaim("problem", "could not establish identity from evidence")
-		}
-
-		return o.finalize(appraisal, err)
-	}
-
-	// TODO(setrofim): in principle, we should be matching exactly
-	// here, as we are trying to identify triples for a specific
-	// entity described by the taID environment. However, CoRIM does
-	// not provide a good way to endorse an environment description. So
-	// in practice, environments inside CoRIMs may serve
-	// the double duty of providing a way to match measurements
-	// _and_ an additional description of the environments that is
-	// not present in the evidence.
-	//
-	// Specifically, our parsec-tpm scheme currently relies on the
-	// fact that the trust anchors are provisioned with environment
-	// that contains a class-id as well as an instance-id; the
-	// evidence only contains an instance-id, and the class-id in
-	// the trust anchor is then used to retrieve reference values;
-	// there is no way to directly link reference values to the
-	// evidence.
-	//
-	// Because provisioned environments may contain "additional"
-	// descriptive elements, as well as elements used for matching,
-	// we are forced to do inexact matching here for now, and leave
-	// it to the attestation schemes to resolve this.
-	matchExactly := false
 	var trustAnchors []*comid.KeyTriple
-	trustAnchors, err = o.getKeyTriples(appraisal.TrustAnchorIDs, appraisal.StoreLabel(), matchExactly)
+	usesExternalEndorsements := handler.UsesExternalEndorsements()
+	if usesExternalEndorsements {
+		appraisal.TrustAnchorIDs, err = handler.GetTrustAnchorIDs(evidence)
+		if err != nil {
+			if errors.Is(err, handlermod.BadEvidenceError{}) {
+				appraisal.SetAllClaims(ear.CryptoValidationFailedClaim)
+				appraisal.AddPolicyClaim("problem", "could not establish identity from evidence")
+			}
 
-	if err != nil {
-		if errors.Is(err, handlermod.ErrNotFound) {
-			// finalize will be called in the next block
-			o.logger.Warn("no trust anchor in store")
-		} else {
 			return o.finalize(appraisal, err)
 		}
-	}
-	if trustAnchors == nil {
-		err = handlermod.BadEvidence("no trust anchor for %s", appraisal.DescribeTrustAnchorIDs())
-		appraisal.SetAllClaims(ear.CryptoValidationFailedClaim)
-		appraisal.AddPolicyClaim("problem", "no trust anchor for evidence")
-		return o.finalize(appraisal, err)
+
+		// TODO(setrofim): in principle, we should be matching exactly
+		// here, as we are trying to identify triples for a specific
+		// entity described by the taID environment. However, CoRIM does
+		// not provide a good way to endorse an environment description. So
+		// in practice, environments inside CoRIMs may serve
+		// the double duty of providing a way to match measurements
+		// _and_ an additional description of the environments that is
+		// not present in the evidence.
+		//
+		// Specifically, our parsec-tpm scheme currently relies on the
+		// fact that the trust anchors are provisioned with environment
+		// that contains a class-id as well as an instance-id; the
+		// evidence only contains an instance-id, and the class-id in
+		// the trust anchor is then used to retrieve reference values;
+		// there is no way to directly link reference values to the
+		// evidence.
+		//
+		// Because provisioned environments may contain "additional"
+		// descriptive elements, as well as elements used for matching,
+		// we are forced to do inexact matching here for now, and leave
+		// it to the attestation schemes to resolve this.
+		matchExactly := false
+		trustAnchors, err = o.getKeyTriples(appraisal.TrustAnchorIDs, appraisal.StoreLabel(), matchExactly)
+
+		if err != nil {
+			if errors.Is(err, handlermod.ErrNotFound) {
+				// finalize will be called in the next block
+				o.logger.Warn("no trust anchor in store")
+			} else {
+				return o.finalize(appraisal, err)
+			}
+		}
+		if trustAnchors == nil {
+			err = handlermod.BadEvidence("no trust anchor for %s", appraisal.DescribeTrustAnchorIDs())
+			appraisal.SetAllClaims(ear.CryptoValidationFailedClaim)
+			appraisal.AddPolicyClaim("problem", "no trust anchor for evidence")
+			return o.finalize(appraisal, err)
+		}
 	}
 
 	claims, err := handler.ExtractClaims(appraisal.Evidence, trustAnchors)
@@ -444,24 +447,28 @@ func (o *GRPC) GetAttestation(
 	}
 	appraisal.Claims = claims
 
-	appraisal.ReferenceValueIDs, err = handler.GetReferenceValueIDs(trustAnchors, claims)
-	if err != nil {
-		return o.finalize(appraisal, err)
-	}
-
-	o.logger.Debugw("constructed evidence context",
-		"software-id", appraisal.ReferenceValueIDs,
-		"trust-anchor-id", appraisal.TrustAnchorIDs)
-
 	var endorsements []*comid.ValueTriple
-	o.logger.Debug("obtaining endorsements...")
-	endorsements, err = o.getValueTriples(appraisal.ReferenceValueIDs, appraisal.StoreLabel(), true)
-	if err != nil {
-		if errors.Is(err, handlermod.ErrNotFound) {
-			o.logger.Warn("no reference values in store")
-		} else {
+	if usesExternalEndorsements {
+		appraisal.ReferenceValueIDs, err = handler.GetReferenceValueIDs(trustAnchors, claims)
+		if err != nil {
 			return o.finalize(appraisal, err)
 		}
+
+		o.logger.Debugw("constructed evidence context",
+			"software-id", appraisal.ReferenceValueIDs,
+			"trust-anchor-id", appraisal.TrustAnchorIDs)
+
+		o.logger.Debug("obtaining endorsements...")
+		endorsements, err = o.getValueTriples(appraisal.ReferenceValueIDs, appraisal.StoreLabel(), true)
+		if err != nil {
+			if errors.Is(err, handlermod.ErrNotFound) {
+				o.logger.Warn("no reference values in store")
+			} else {
+				return o.finalize(appraisal, err)
+			}
+		}
+	} else {
+		o.logger.Debug("using endorsements resolved by scheme")
 	}
 
 	o.logger.Debug("validating evidence...")
